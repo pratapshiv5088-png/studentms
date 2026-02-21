@@ -50,6 +50,30 @@ app.post("/students", async (req, res) => {
     }
 });
 
+app.delete("/students/:id", async (req, res) => {
+
+    try {
+
+        console.log("DELETE ID:", req.params.id);
+
+        const deletedStudent = await Student.findByIdAndDelete(req.params.id);
+
+        if (!deletedStudent) {
+            return res.status(404).json({ message: "Student not found" });
+        }
+
+        res.json({ message: "Student deleted successfully" });
+
+    } catch (error) {
+
+        console.log("DELETE ERROR:", error);
+
+        res.status(500).json({ error: error.message });
+
+    }
+
+});
+
 const PORT = process.env.PORT || 5001;
 
 // IMPORTANT FIX: start server ONLY after DB connects
