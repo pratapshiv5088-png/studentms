@@ -20,8 +20,8 @@ app.get("/students", async (req, res) => {
     console.log("STUDENTS ROUTE HIT");
 
     try {
+
         const students = await Student.find();
-        console.log("Students:", students);
 
         res.json(students);
 
@@ -35,8 +35,6 @@ app.get("/students", async (req, res) => {
 
 app.post("/students", async (req, res) => {
 
-    console.log("POST DATA:", req.body);
-
     try {
 
         const student = new Student(req.body);
@@ -47,7 +45,6 @@ app.post("/students", async (req, res) => {
 
     } catch (error) {
 
-        console.log(error);
         res.status(500).json({ error: error.message });
 
     }
@@ -55,10 +52,17 @@ app.post("/students", async (req, res) => {
 
 const PORT = process.env.PORT || 5001;
 
-app.listen(PORT, () => {
-    console.log("Server running on port", PORT);
-});
+// IMPORTANT FIX: start server ONLY after DB connects
+mongoose.connect(
+    "mongodb+srv://shiviii:shiv1234@cluster0.brhj0if.mongodb.net/studentDB?retryWrites=true&w=majority"
+)
+.then(() => {
 
-mongoose.connect("mongodb+srv://shiviii:shiv1234@cluster0.brhj0if.mongodb.net/studentDB")
-.then(() => console.log("Database connected"))
+    console.log("Database connected");
+
+    app.listen(PORT, () => {
+        console.log("Server running on port", PORT);
+    });
+
+})
 .catch(err => console.log("DB ERROR:", err));
